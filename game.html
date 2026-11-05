@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>事件ファイル</title>
+  <meta name="description" content="手がかりを集め、真相を再構築し、犯人を突き止めるWeb版インタラクティブ推理ストーリー。">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700;900&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-screen="title">
+  <canvas id="rain" aria-hidden="true"></canvas>
+  <div id="flash" aria-hidden="true"></div>
+
+  <!-- タイトル -->
+  <section id="screen-title" class="screen active">
+    <div class="title-sky" aria-hidden="true"></div>
+    <div class="title-mansion" id="title-art" aria-hidden="true"></div>
+    <a class="title-back" href="index.html">← 事件ファイルの選択へ</a>
+    <div class="title-wrap">
+      <p class="title-kicker"><span class="title-file" data-ui="no"></span>インタラクティブ推理ストーリー</p>
+      <h1 class="title-main" data-ui="title"></h1>
+      <p class="title-sub" data-ui="subtitle"></p>
+      <p class="title-badge" id="title-badge"></p>
+      <div class="title-menu">
+        <button id="btn-new" class="btn primary">はじめから</button>
+        <button id="btn-continue" class="btn">つづきから</button>
+        <button id="btn-howto" class="btn ghost">遊び方</button>
+        <button class="btn ghost btn-ruby" type="button"></button>
+      </div>
+      <p class="title-foot" data-ui="titleFoot"></p>
+      <div class="title-cast-label">登場人物</div>
+      <div class="title-cast" id="title-cast"></div>
+    </div>
+  </section>
+
+  <!-- シナリオ（目次） -->
+  <section id="screen-scenario" class="screen">
+    <header class="topbar">
+      <div class="brand" data-ui="scenarioBrand"></div>
+      <div class="topbar-actions">
+        <button class="btn small ghost btn-ruby" type="button"></button>
+        <button id="btn-scn-back" class="btn small ghost">タイトルへ</button>
+      </div>
+    </header>
+    <main class="scenario-wrap">
+      <div class="stories-intro">
+        <p class="stories-kicker">シナリオ</p>
+        <h1 class="stories-title">物語の流れ</h1>
+        <p class="stories-lead" data-ui="scenarioLead"></p>
+      </div>
+      <ol class="scenario-list" id="scenario-list"></ol>
+      <div class="scenario-foot" id="scenario-foot"></div>
+    </main>
+  </section>
+
+  <!-- 第一章「来歴」 -->
+  <section id="screen-past" class="screen">
+    <header class="topbar">
+      <div class="brand">第一章　来歴</div>
+      <nav class="stepper" aria-label="章の進行"></nav>
+      <div class="loc-label" id="past-progress"></div>
+      <div class="topbar-actions">
+        <button class="btn small ghost btn-ruby" type="button"></button>
+        <button id="btn-past-back" class="btn small ghost">目次</button>
+      </div>
+    </header>
+    <main class="stories-wrap past-wrap">
+      <div class="stories-intro">
+        <p class="stories-kicker">第一章</p>
+        <h1 class="stories-title">来歴 ― 八人の過去</h1>
+        <p class="stories-lead" data-ui="pastLead"></p>
+        <p class="stories-lead small"><strong class="key">太字</strong>は重要な情報です。太字をクリックすると手がかりとして「来歴手帳」に記録され、思い出の品を調べると品の手がかりが手に入ります。<br>集めた手がかりを突きつけて、八つの「人物の謎」を推理で解き明かしてください。すべて解くと、第二章へ進めます。</p>
+      </div>
+      <div class="past-layout">
+        <div class="past-main">
+          <h2 class="hub-h">八人の来歴</h2>
+          <div class="story-grid past-grid" id="past-grid"></div>
+          <h2 class="hub-h">思い出の品</h2>
+          <p class="hub-note">人物の来歴を読むと、その人物の思い出の品を調べられるようになります。調べた品は「来歴手帳」に記録されます。</p>
+          <div class="item-grid" id="item-grid"></div>
+          <h2 class="hub-h">人物の謎</h2>
+          <p class="hub-note">謎は、その人物の来歴を読むと挑戦できます。推理は終章と同じ形式です。<strong>来歴手帳に記録した手がかり</strong>を突きつけ、段階を追って真相を再構築しましょう。答えた段までの推理は自動で保存され、来歴に戻っても続きから再開できます。</p>
+          <div class="myst-grid" id="myst-grid"></div>
+          <div class="stories-actions" id="past-actions"></div>
+        </div>
+        <aside class="past-nb" id="past-nb"></aside>
+      </div>
+    </main>
+  </section>
+
+  <!-- 第二章「幕前」：事件当日の物語（一覧） -->
+  <section id="screen-stories" class="screen">
+    <header class="topbar">
+      <div class="brand">第二章　幕前</div>
+      <nav class="stepper" aria-label="章の進行"></nav>
+      <div class="loc-label" id="stories-progress"></div>
+      <div class="topbar-actions">
+        <button class="btn small ghost btn-ruby" type="button"></button>
+        <button id="btn-stories-back" class="btn small ghost">目次</button>
+      </div>
+    </header>
+    <main class="stories-wrap">
+      <div class="stories-intro">
+        <p class="stories-kicker">第二章</p>
+        <h1 class="stories-title" data-ui="dayTitle"></h1>
+        <p class="stories-lead" data-ui="dayLead"></p>
+        <p class="stories-lead small" data-ui="dayNote"></p>
+      </div>
+      <div class="story-grid" id="story-grid"></div>
+      <div class="stories-actions" id="stories-actions"></div>
+    </main>
+  </section>
+
+  <!-- 物語リーダー（第一章・第二章共通） -->
+  <section id="screen-reader" class="screen">
+    <header class="topbar">
+      <button id="btn-reader-list" class="btn small ghost">← 一覧</button>
+      <div class="brand" id="reader-label"></div>
+      <nav class="stepper" aria-label="章の進行"></nav>
+      <div class="topbar-actions">
+        <button class="btn small ghost btn-ruby" type="button"></button>
+        <button id="btn-reader-prev" class="btn small ghost">‹ 前の章</button>
+        <button id="btn-reader-next" class="btn small ghost">次の章 ›</button>
+      </div>
+    </header>
+    <main class="reader-wrap">
+      <article class="reader" id="reader"></article>
+    </main>
+  </section>
+
+  <!-- 捜査画面 -->
+  <section id="screen-game" class="screen">
+    <header class="topbar">
+      <div class="brand" data-ui="ch3Brand"></div>
+      <nav class="stepper" aria-label="章の進行"></nav>
+      <div class="loc-label" id="loc-label"></div>
+      <div class="topbar-actions">
+        <button id="btn-rain" class="btn small ghost"></button>
+        <button id="btn-log" class="btn small ghost">会話履歴</button>
+        <button id="btn-menu" class="btn small ghost">メニュー</button>
+        <button id="btn-deduce" class="btn small primary">推理を披露する</button>
+      </div>
+    </header>
+    <main class="layout">
+      <aside class="pane pane-map">
+        <h2 class="pane-title" data-ui="mapPane"></h2>
+        <div id="map"></div>
+        <ul id="loc-list" class="loc-list"></ul>
+      </aside>
+      <section class="pane pane-scene">
+        <div id="scene"></div>
+      </section>
+      <aside class="pane pane-notebook">
+        <h2 class="pane-title">捜査手帳</h2>
+        <nav class="nb-tabs" id="nb-tabs"></nav>
+        <div class="nb-body" id="nb-body"></div>
+      </aside>
+    </main>
+  </section>
+
+  <!-- 推理パート -->
+  <section id="screen-deduce" class="screen">
+    <header class="topbar deduce-top">
+      <div class="brand" id="deduce-brand">終章　推理</div>
+      <nav class="stepper" aria-label="章の進行"></nav>
+      <div class="cred-wrap">信頼度 <span id="cred" class="cred"></span></div>
+      <div class="topbar-actions">
+        <button id="btn-abort" class="btn small ghost">調査に戻る</button>
+      </div>
+    </header>
+    <main class="deduce-layout">
+      <section class="deduce-main">
+        <div id="deduce-progress" class="deduce-progress"></div>
+        <div id="dq" class="dq"></div>
+      </section>
+      <aside class="deduce-side">
+        <h3 class="section-title">再構築された真相</h3>
+        <ol id="restored-list" class="restored"></ol>
+      </aside>
+    </main>
+  </section>
+
+  <!-- エンディング -->
+  <section id="screen-ending" class="screen">
+    <div class="ending" id="ending"></div>
+  </section>
+
+  <!-- 会話ウィンドウ -->
+  <div id="dialogue" class="overlay hidden">
+    <div id="dlg-stage" class="dlg-stage">
+      <div id="stage-art" class="stage-art"></div>
+      <div id="stage-label" class="stage-label"></div>
+    </div>
+    <div id="dlg-box" class="dlg-box">
+      <div id="dlg-portrait" class="dlg-portrait"></div>
+      <div class="dlg-content">
+        <div id="dlg-name" class="dlg-name"></div>
+        <div id="dlg-text" class="dlg-text"></div>
+      </div>
+      <button id="dlg-skip" class="dlg-skip" title="この会話をスキップ">スキップ ▶▶</button>
+      <div class="dlg-next" aria-hidden="true">▼</div>
+    </div>
+  </div>
+
+  <!-- モーダル -->
+  <div id="modal" class="overlay hidden">
+    <div id="modal-card" class="modal-card"></div>
+  </div>
+
+  <div id="toasts" aria-live="polite"></div>
+
+  <script src="js/series.js"></script>
+  <script>
+    (function () {
+      var id = new URLSearchParams(location.search).get('s');
+      var series = (window.SERIES || []).filter(function (s) { return s.id === id; })[0];
+      if (!series) { location.replace('index.html'); return; }
+      window.CURRENT_SERIES = series;
+      document.title = series.title + ' ― ' + series.subtitle;
+      series.files.concat(['js/engine.js', 'js/ruby.js']).forEach(function (src) {
+        var el = document.createElement('script');
+        el.src = src;
+        el.async = false;
+        document.body.appendChild(el);
+      });
+    })();
+  </script>
+</body>
+</html>

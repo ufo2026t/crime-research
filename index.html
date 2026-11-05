@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>事件ファイル ― インタラクティブ推理ストーリー</title>
+  <meta name="description" content="手がかりを集め、真相を再構築し、犯人を突き止めるWeb版インタラクティブ推理ストーリー。挑む事件を選んでください。">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700;900&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="select-page">
+  <div class="sel-bg" aria-hidden="true"></div>
+
+  <header class="sel-head">
+    <div class="sel-tools"><button class="btn small ghost btn-ruby" type="button"></button></div>
+    <p class="title-kicker">インタラクティブ推理ストーリー</p>
+    <h1 class="sel-title">事件ファイル</h1>
+    <p class="title-sub">― 閉ざされた夜の、八人の嘘 ―</p>
+    <p class="sel-lead">挑む事件を選んでください。<br>二つの事件は舞台も登場人物もそれぞれ独立しており、どちらから遊んでも構いません。進み具合は事件ごとに自動で保存されます。</p>
+    <ol class="sel-flow" aria-label="どの事件も四つの章で進みます">
+      <li><span>第一章</span>来歴<small>八人の過去と謎</small></li>
+      <li><span>第二章</span>幕前<small>事件当日の一日</small></li>
+      <li><span>第三章</span>捜査<small>現場の手がかり</small></li>
+      <li><span>終章</span>推理<small>真相と犯人</small></li>
+    </ol>
+  </header>
+
+  <main class="sel-grid" id="sel-grid"></main>
+
+  <footer class="sel-foot">
+    <p>各事件のタイトル画面の「遊び方」で、操作方法を確認できます。セーブデータはこのブラウザに保存されます。</p>
+  </footer>
+
+  <script src="js/series.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      var esc = function (s) {
+        return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+      };
+
+      function progressOf(s) {
+        var d = null;
+        try { d = JSON.parse(localStorage.getItem(s.saveKey) || 'null'); } catch (e) { d = null; }
+        if (!d || d.v !== 1) return null;
+        var myst = d.myst || {};
+        var solved = Object.keys(myst).filter(function (k) { return myst[k] && myst[k].solved; }).length;
+        return {
+          past: (d.pastRead || []).length,
+          myst: solved,
+          day: (d.storiesRead || []).length,
+          night: !!d.prologueDone,
+          clues: (d.clues || []).length,
+          trueEnd: (d.endings || []).indexOf('true') >= 0,
+          badEnd: (d.endings || []).some(function (e) { return e !== 'true'; }),
+        };
+      }
+
+      function pip(label, value, state) {
+        return '<li class="case-pip ' + state + '"><span class="case-pip-l">' + label + '</span><span class="case-pip-v">' + value + '</span></li>';
+      }
+
+      function card(s) {
+        var p = progressOf(s);
+        var n = s.totals.chars;
+        var pips = p
+          ? pip('来歴', '読了 ' + p.past + '/' + n + '・謎 ' + p.myst + '/' + n, p.past >= n && p.myst >= n ? 'done' : p.past || p.myst ? 'on' : '')
+            + pip('幕前', '読了 ' + p.day + '/' + n, p.day >= n ? 'done' : p.day ? 'on' : '')
+            + pip('捜査', p.night ? '手がかり ' + p.clues + '/' + s.totals.clues : '未到達', p.night && p.clues >= s.totals.clues ? 'done' : p.night ? 'on' : '')
+            + pip('推理', p.trueEnd ? 'TRUE END' : p.badEnd ? 'BAD END' : '未解決', p.trueEnd ? 'done' : p.badEnd ? 'on' : '')
+          : pip('来歴', '未着手', '') + pip('幕前', '未着手', '') + pip('捜査', '未着手', '') + pip('推理', '未解決', '');
+        var started = p && (p.past || p.myst || p.day || p.night);
+        return '<a class="case-card case-' + s.id + '" href="game.html?s=' + encodeURIComponent(s.id) + '">'
+          + '<div class="case-art">' + s.art + '<div class="case-weather ' + s.weather + '"></div>'
+          + '<span class="case-no">' + esc(s.no) + '</span>'
+          + (p && p.trueEnd ? '<span class="case-solved">解決済み</span>' : '')
+          + '</div>'
+          + '<div class="case-body">'
+          + '<p class="case-meta">' + esc(s.season) + '　／　' + esc(s.setting) + '</p>'
+          + '<h2 class="case-title">' + esc(s.title) + '</h2>'
+          + '<p class="case-sub">― ' + esc(s.subtitle) + ' ―</p>'
+          + '<p class="case-tagline">' + esc(s.tagline) + '</p>'
+          + '<p class="case-synopsis">' + esc(s.synopsis) + '</p>'
+          + '<p class="case-cast"><span>登場人物</span>' + esc(s.cast) + '</p>'
+          + '<ol class="case-progress" aria-label="進み具合">' + pips + '</ol>'
+          + '<span class="btn primary case-go">' + (started ? 'つづきから挑む' : 'この事件に挑む') + '</span>'
+          + '</div></a>';
+      }
+
+      document.getElementById('sel-grid').innerHTML = (window.SERIES || []).map(card).join('');
+    })();
+  </script>
+  <script src="js/ruby.js"></script>
+</body>
+</html>

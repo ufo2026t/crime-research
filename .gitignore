@@ -1,0 +1,19 @@
+# 認証情報（コミットしない）
+token.txt
+*.token
+.env
+.env.*
+
+# OS が作るファイル
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# エディタ
+.vscode/
+.idea/
+*.swp
+
+# ログ・依存パッケージ
+*.log
+node_modules/
