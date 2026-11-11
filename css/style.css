@@ -100,7 +100,7 @@
   --name-mix: #ffffff;
   --rain-rgb: 170, 190, 220;
   --snow-rgb: 232, 238, 246;
-  --font: "Noto Serif JP", "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", "MS PMincho", serif;
+  --font: "Noto Serif JP", "Noto Serif CJK JP", "Source Han Serif JP", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Yu Mincho", "YuMincho", "BIZ UDPMincho", "MS PMincho", "IPAexMincho", "IPAMincho", serif;
   --radius: 10px;
   --shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
 }
