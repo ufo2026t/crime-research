@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700;900&display=swap">
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
 </head>
 <body data-screen="title">
   <canvas id="rain" aria-hidden="true"></canvas>
@@ -20,6 +21,7 @@
     <div class="title-sky" aria-hidden="true"></div>
     <div class="title-mansion" id="title-art" aria-hidden="true"></div>
     <a class="title-back" href="index.html">← 事件ファイルの選択へ</a>
+    <div class="corner-tools"><button class="btn small ghost btn-theme" type="button"></button></div>
     <div class="title-wrap">
       <p class="title-kicker"><span class="title-file" data-ui="no"></span>インタラクティブ推理ストーリー</p>
       <h1 class="title-main" data-ui="title"></h1>
@@ -42,6 +44,7 @@
     <header class="topbar">
       <div class="brand" data-ui="scenarioBrand"></div>
       <div class="topbar-actions">
+        <button class="btn small ghost btn-theme" type="button"></button>
         <button class="btn small ghost btn-ruby" type="button"></button>
         <button id="btn-scn-back" class="btn small ghost">タイトルへ</button>
       </div>
@@ -64,6 +67,7 @@
       <nav class="stepper" aria-label="章の進行"></nav>
       <div class="loc-label" id="past-progress"></div>
       <div class="topbar-actions">
+        <button class="btn small ghost btn-theme" type="button"></button>
         <button class="btn small ghost btn-ruby" type="button"></button>
         <button id="btn-past-back" class="btn small ghost">目次</button>
       </div>
@@ -99,6 +103,7 @@
       <nav class="stepper" aria-label="章の進行"></nav>
       <div class="loc-label" id="stories-progress"></div>
       <div class="topbar-actions">
+        <button class="btn small ghost btn-theme" type="button"></button>
         <button class="btn small ghost btn-ruby" type="button"></button>
         <button id="btn-stories-back" class="btn small ghost">目次</button>
       </div>
@@ -122,6 +127,7 @@
       <div class="brand" id="reader-label"></div>
       <nav class="stepper" aria-label="章の進行"></nav>
       <div class="topbar-actions">
+        <button class="btn small ghost btn-theme" type="button"></button>
         <button class="btn small ghost btn-ruby" type="button"></button>
         <button id="btn-reader-prev" class="btn small ghost">‹ 前の章</button>
         <button id="btn-reader-next" class="btn small ghost">次の章 ›</button>
@@ -139,6 +145,7 @@
       <nav class="stepper" aria-label="章の進行"></nav>
       <div class="loc-label" id="loc-label"></div>
       <div class="topbar-actions">
+        <button class="btn small ghost btn-theme" type="button"></button>
         <button id="btn-rain" class="btn small ghost"></button>
         <button id="btn-log" class="btn small ghost">会話履歴</button>
         <button id="btn-menu" class="btn small ghost">メニュー</button>
@@ -169,6 +176,7 @@
       <nav class="stepper" aria-label="章の進行"></nav>
       <div class="cred-wrap">信頼度 <span id="cred" class="cred"></span></div>
       <div class="topbar-actions">
+        <button class="btn small ghost btn-theme" type="button"></button>
         <button id="btn-abort" class="btn small ghost">調査に戻る</button>
       </div>
     </header>
@@ -186,6 +194,7 @@
 
   <!-- エンディング -->
   <section id="screen-ending" class="screen">
+    <div class="corner-tools"><button class="btn small ghost btn-theme" type="button"></button></div>
     <div class="ending" id="ending"></div>
   </section>
 

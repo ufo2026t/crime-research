@@ -351,7 +351,8 @@
       box.className = 'dlg-box kind-' + kind;
       const sp = speakerOf(who);
       $('#dlg-name').textContent = sp ? sp.name : '';
-      $('#dlg-name').style.color = sp ? lighten(sp.portrait.color) : '';
+      if (sp) $('#dlg-name').style.setProperty('--who', sp.portrait.color);
+      else $('#dlg-name').style.removeProperty('--who');
       $('#dlg-portrait').innerHTML = sp ? portraitSVG(sp) : '';
       pushLog(who, text);
 
@@ -405,13 +406,6 @@
       if (d) d();
     },
   };
-
-  function lighten(hex) {
-    const n = parseInt(hex.slice(1), 16);
-    const mix = (v) => Math.round(v + (255 - v) * 0.55);
-    const r = mix((n >> 16) & 255), g = mix((n >> 8) & 255), b = mix(n & 255);
-    return `rgb(${r},${g},${b})`;
-  }
 
   /* ================================================================
    * モーダル
@@ -1974,7 +1968,7 @@
     const list = h('div', { class: 'backlog' }, entries.length ? entries.map(e => {
       const sp = speakerOf(e.w);
       return h('div', { class: 'bl-line ' + (sp ? 'speech' : 'narr') },
-        sp ? h('span', { class: 'bl-name', style: 'color:' + lighten(sp.portrait.color) }, sp.name) : null,
+        sp ? h('span', { class: 'bl-name', style: '--who:' + sp.portrait.color }, sp.name) : null,
         h('span', { class: 'bl-text', html: markup(e.t) }));
     }) : h('p', { class: 'empty' }, 'まだ会話はない。'));
     confirmBox('会話履歴', list, [{ label: '閉じる', cls: 'primary' }]);
@@ -2000,9 +1994,16 @@
    * 雨（キャンバス）
    * ================================================================ */
   const Rain = {
-    c: null, ctx: null, drops: [], w: 0, h: 0, reduced: false,
+    c: null, ctx: null, drops: [], w: 0, h: 0, reduced: false, rgb: '',
+
+    readColor() {
+      const v = getComputedStyle(document.documentElement).getPropertyValue(SNOW ? '--snow-rgb' : '--rain-rgb').trim();
+      this.rgb = v || (SNOW ? '232,238,246' : '170,190,220');
+    },
 
     init() {
+      this.readColor();
+      document.addEventListener('themechange', () => this.readColor());
       this.c = $('#rain');
       this.ctx = this.c.getContext('2d');
       this.reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2047,7 +2048,7 @@
       ctx.clearRect(0, 0, this.w, this.h);
       if (SNOW) {
         for (const d of this.drops) {
-          ctx.fillStyle = `rgba(232,238,246,${d.a})`;
+          ctx.fillStyle = `rgba(${this.rgb},${d.a})`;
           ctx.beginPath();
           ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
           ctx.fill();
@@ -2061,7 +2062,7 @@
       }
       ctx.lineWidth = 1;
       for (const d of this.drops) {
-        ctx.strokeStyle = `rgba(170,190,220,${d.a})`;
+        ctx.strokeStyle = `rgba(${this.rgb},${d.a})`;
         ctx.beginPath();
         ctx.moveTo(d.x, d.y);
         ctx.lineTo(d.x - d.l * 0.18, d.y + d.l);
