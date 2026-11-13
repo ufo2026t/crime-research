@@ -7,6 +7,7 @@
   const SAVE_KEY = META.saveKey || 'shirasagi-save-v1';
   const START_LOC = G.startLocation || G.locationOrder[0];
   const SNOW = META.weather === 'snow';
+  const CALM = META.weather === 'calm';
   const VICTIM = Object.values(G.characters).find(c => c.victim);
   const CALLS_LABEL = `${VICTIM ? VICTIM.short : '被害者'}の呼び方：`;
   const LOG_LIMIT = 300;
@@ -200,7 +201,18 @@
     if (acc.includes('mustache')) extra += `<path d="M42 59 Q46 56.5 50 58.5 Q54 56.5 58 59 Q54 61.5 50 60.5 Q46 61.5 42 59Z" fill="#9aa0a6"/>`;
     if (acc.includes('glasses')) extra += `<g stroke="#cfd6e0" stroke-width="1.3" fill="none" opacity=".85"><circle cx="43" cy="50" r="5"/><circle cx="57" cy="50" r="5"/><path d="M48 50 L52 50"/></g>`;
     if (acc.includes('glasses2')) extra += `<g stroke="#d8c9a8" stroke-width="1.2" fill="none" opacity=".85"><rect x="37" y="46.5" width="11" height="7" rx="1.5"/><rect x="52" y="46.5" width="11" height="7" rx="1.5"/><path d="M48 50 L52 50"/></g>`;
+    if (acc.includes('monocle')) extra += `<circle cx="57" cy="50" r="5.5" fill="none" stroke="#d8c9a8" stroke-width="1.4" opacity=".9"/><path d="M62 52.5 Q67 66 60 84" stroke="#d8c9a8" stroke-width=".7" fill="none" opacity=".7"/>`;
     if (acc.includes('maidcap')) extra += `<path d="M35 31 Q50 20 65 31 L63 34.5 Q50 26 37 34.5Z" fill="#ece8df"/>`;
+    if (acc.includes('cloche')) {
+      extra += `<path d="M30.5 47 Q29 21 50 20 Q71 21 69.5 47 Q61 41.5 50 41.5 Q39 41.5 30.5 47Z" fill="${p.hatColor || '#3a2a2a'}" ${rim}/>
+        <path d="M31.5 43 Q50 35.5 68.5 43" stroke="#b3202e" stroke-width="2.2" fill="none" opacity=".8"/>`;
+    }
+    if (acc.includes('butterfly')) {
+      extra += `<g transform="translate(63 25) rotate(-18)">
+        <path d="M0 0 Q-7 -9 -10 -3 Q-9 2 0 0Z M0 0 Q7 -9 10 -3 Q9 2 0 0Z" fill="#8fb8dc" opacity=".92"/>
+        <path d="M0 0 Q-5 6 -7.5 3 Q-6.5 0 0 0Z M0 0 Q5 6 7.5 3 Q6.5 0 0 0Z" fill="#c9a45c" opacity=".9"/>
+        <path d="M0 -3.5 L0 4" stroke="#0b0c10" stroke-width="1.1"/></g>`;
+    }
     if (acc.includes('kanzashi')) {
       extra += '<path d="M40 31 L66 17" stroke="#c9a45c" stroke-width="1.3"/>';
       for (let i = 0; i < 5; i++) {
@@ -248,7 +260,8 @@
     f.classList.remove('on');
     void f.offsetWidth;
     f.classList.add('on');
-    if (!SNOW) Sound.thunder();
+    if (CALM) Sound.bell();
+    else if (!SNOW) Sound.thunder();
   }
 
   function shake() {
@@ -1991,14 +2004,14 @@
   }
 
   /* ================================================================
-   * 雨（キャンバス）
+   * 雨・雪・凪の海の光（キャンバス）
    * ================================================================ */
   const Rain = {
     c: null, ctx: null, drops: [], w: 0, h: 0, reduced: false, rgb: '',
 
     readColor() {
-      const v = getComputedStyle(document.documentElement).getPropertyValue(SNOW ? '--snow-rgb' : '--rain-rgb').trim();
-      this.rgb = v || (SNOW ? '232,238,246' : '170,190,220');
+      const v = getComputedStyle(document.documentElement).getPropertyValue(SNOW ? '--snow-rgb' : CALM ? '--calm-rgb' : '--rain-rgb').trim();
+      this.rgb = v || (SNOW ? '232,238,246' : CALM ? '205,220,240' : '170,190,220');
     },
 
     init() {
@@ -2009,12 +2022,24 @@
       this.reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       this.resize();
       window.addEventListener('resize', () => this.resize());
-      const count = SNOW ? (this.reduced ? 50 : 170) : (this.reduced ? 60 : 240);
+      const count = SNOW ? (this.reduced ? 50 : 170) : CALM ? (this.reduced ? 30 : 90) : (this.reduced ? 60 : 240);
       for (let i = 0; i < count; i++) this.drops.push(this.make(true));
       requestAnimationFrame(() => this.loop());
     },
 
     make(initial) {
+      if (CALM) {
+        return {
+          x: Math.random() * this.w,
+          y: this.h * (0.35 + Math.random() * 0.7),
+          r: 0.6 + Math.random() * 1.4,
+          vx: (Math.random() - 0.5) * 0.12,
+          vy: -(this.reduced ? 0.02 : 0.05) - Math.random() * 0.12,
+          a: 0.25 + Math.random() * 0.5,
+          ph: initial ? Math.random() * Math.PI * 2 : -Math.PI / 2,
+          sp: 0.008 + Math.random() * 0.02,
+        };
+      }
       if (SNOW) {
         return {
           x: Math.random() * this.w * 1.2,
@@ -2046,6 +2071,21 @@
     loop() {
       const ctx = this.ctx;
       ctx.clearRect(0, 0, this.w, this.h);
+      if (CALM) {
+        for (const d of this.drops) {
+          d.ph += d.sp;
+          const tw = (Math.sin(d.ph) + 1) / 2;
+          ctx.fillStyle = `rgba(${this.rgb},${(d.a * tw).toFixed(3)})`;
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, d.r * (0.7 + tw * 0.5), 0, Math.PI * 2);
+          ctx.fill();
+          d.x += d.vx;
+          d.y += d.vy;
+          if (d.y < this.h * 0.2 || d.x < -10 || d.x > this.w + 10) Object.assign(d, this.make(false));
+        }
+        requestAnimationFrame(() => this.loop());
+        return;
+      }
       if (SNOW) {
         for (const d of this.drops) {
           ctx.fillStyle = `rgba(${this.rgb},${d.a})`;
@@ -2076,7 +2116,7 @@
   };
 
   /* ================================================================
-   * 雨音・雪風（Web Audio によるノイズ合成）
+   * 雨音・雪風・波音（Web Audio によるノイズ合成）
    * ================================================================ */
   const Sound = {
     ctx: null, master: null, on: false,
@@ -2101,13 +2141,36 @@
       src.loop = true;
       const hp = ctx.createBiquadFilter();
       hp.type = 'highpass';
-      hp.frequency.value = SNOW ? 60 : 180;
+      hp.frequency.value = SNOW ? 60 : CALM ? 40 : 180;
       const lp = ctx.createBiquadFilter();
       lp.type = 'lowpass';
-      lp.frequency.value = SNOW ? 900 : 4200;
+      lp.frequency.value = SNOW ? 900 : CALM ? 520 : 4200;
       const master = ctx.createGain();
       master.gain.value = 0;
-      if (SNOW) {
+      if (CALM) {
+        const swell = ctx.createGain();
+        swell.gain.value = 0.55;
+        const lfo = ctx.createOscillator();
+        lfo.frequency.value = 0.085;
+        const depth = ctx.createGain();
+        depth.gain.value = 0.4;
+        lfo.connect(depth).connect(swell.gain);
+        src.connect(hp).connect(lp).connect(swell).connect(master).connect(ctx.destination);
+        const hum = ctx.createOscillator();
+        hum.type = 'triangle';
+        hum.frequency.value = 46;
+        const humGain = ctx.createGain();
+        humGain.gain.value = 0.05;
+        const throb = ctx.createOscillator();
+        throb.frequency.value = 1.6;
+        const throbDepth = ctx.createGain();
+        throbDepth.gain.value = 0.025;
+        throb.connect(throbDepth).connect(humGain.gain);
+        hum.connect(humGain).connect(master);
+        lfo.start();
+        hum.start();
+        throb.start();
+      } else if (SNOW) {
         const gust = ctx.createGain();
         gust.gain.value = 0.75;
         const lfo = ctx.createOscillator();
@@ -2163,6 +2226,23 @@
       g.gain.exponentialRampToValueAtTime(0.001, t + 2.8);
       src.connect(lp).connect(g).connect(ctx.destination);
       src.start(t);
+    },
+
+    bell() {
+      if (!this.on || !this.ctx) return;
+      const ctx = this.ctx;
+      const t = ctx.currentTime + 0.05;
+      for (const [ratio, amp, decay] of [[1, 0.28, 2.6], [2.76, 0.12, 1.4], [5.4, 0.06, 0.8], [8.93, 0.03, 0.5]]) {
+        const o = ctx.createOscillator();
+        o.frequency.value = 620 * ratio;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(amp, t + 0.006);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+        o.connect(g).connect(ctx.destination);
+        o.start(t);
+        o.stop(t + decay + 0.1);
+      }
     },
   };
 
@@ -2222,7 +2302,7 @@
       if (e.key === 'Escape' && !$('#modal').classList.contains('hidden') && modalClosable) closeModal(true);
     });
 
-    if (!SNOW) setInterval(() => {
+    if (!SNOW && !CALM) setInterval(() => {
       if (currentScreen === 'title' && Math.random() < 0.35) flash();
     }, 7000);
   }

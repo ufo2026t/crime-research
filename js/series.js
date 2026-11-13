@@ -4,6 +4,7 @@
  *   files    … game.html が読み込むシリーズ固有のデータ
  *   ruby     … ふりがなを付ける固有名詞 [正規表現, 読み]。長い語を先に置く
  *   art      … タイトル画面・カード・序章の背景に使う建物のシルエット
+ *   weather  … 画面の演出と環境音（rain：雨と雷／snow：雪と風／calm：凪の海の光と波音）
  */
 (function () {
   'use strict';
@@ -76,6 +77,64 @@
     </g>
     <g fill="#b3202e">
       <circle cx="716" cy="236" r="4"/><circle cx="728" cy="230" r="3"/><circle cx="738" cy="238" r="3.5"/>
+    </g>
+  </svg>`;
+
+  const SHIP = `<svg class="mansion" viewBox="0 0 800 300" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+    <g fill="#f3ecd6"><circle cx="730" cy="128" r="62" opacity=".025"/><circle cx="730" cy="128" r="44" opacity=".035"/><circle cx="730" cy="128" r="28" opacity=".05"/></g>
+    <circle cx="730" cy="128" r="15" fill="#f3ecd6" opacity=".88"/>
+    <path d="M-800 244 Q-400 238 0 244 Q200 240 400 244 T800 244 Q1200 238 1600 244 L1600 300 L-800 300Z" fill="#05070c"/>
+    <g fill="#e9e0c4" opacity=".28">
+      <ellipse cx="730" cy="250" rx="24" ry="1.6"/><ellipse cx="724" cy="257" rx="16" ry="1.3"/>
+      <ellipse cx="736" cy="264" rx="28" ry="1.5"/><ellipse cx="728" cy="272" rx="13" ry="1.1"/>
+      <ellipse cx="734" cy="281" rx="20" ry="1.3"/><ellipse cx="726" cy="291" rx="32" ry="1.6"/>
+    </g>
+    <g fill="#9aa3b5" opacity=".08">
+      <ellipse cx="300" cy="94" rx="34" ry="8"/><ellipse cx="246" cy="84" rx="44" ry="10"/><ellipse cx="184" cy="76" rx="52" ry="11"/>
+    </g>
+    <g stroke="#06070b" fill="none">
+      <path d="M196 212 L196 76 M600 212 L600 70" stroke-width="3"/>
+      <path d="M196 78 L146 212 M196 78 L600 72 M600 72 L672 194 M600 72 L470 150" stroke-width=".9" opacity=".8"/>
+    </g>
+    <g fill="#06070b">
+      <path d="M150 244 Q136 230 146 212 L610 212 Q645 210 672 194 L654 244Z"/>
+      <rect x="230" y="186" width="320" height="28"/>
+      <rect x="280" y="166" width="230" height="22"/>
+      <rect x="470" y="148" width="58" height="20"/>
+      <polygon points="330,168 358,168 350,106 322,106"/>
+      <polygon points="392,168 420,168 412,106 384,106"/>
+      <rect x="292" y="158" width="26" height="8" rx="4"/>
+      <rect x="440" y="158" width="26" height="8" rx="4"/>
+    </g>
+    <g fill="#2a1612" opacity=".9">
+      <polygon points="323,114 351,114 350.4,108 322.4,108"/>
+      <polygon points="385,114 413,114 412.4,108 384.4,108"/>
+    </g>
+    <g fill="#e8b860">
+      <circle cx="182" cy="226" r="2.2" opacity=".5"/><circle cx="206" cy="226" r="2.2" opacity=".2"/>
+      <circle cx="230" cy="226" r="2.2" opacity=".6"/><circle cx="254" cy="226" r="2.2" opacity=".35"/>
+      <circle cx="278" cy="226" r="2.2" opacity=".55"/><circle cx="302" cy="226" r="2.2" opacity=".15"/>
+      <circle cx="326" cy="226" r="2.2" opacity=".45"/><circle cx="350" cy="226" r="2.2" opacity=".6"/>
+      <circle cx="374" cy="226" r="2.2" opacity=".25"/><circle cx="398" cy="226" r="2.2" opacity=".5"/>
+      <circle cx="422" cy="226" r="2.2" opacity=".4"/><circle cx="446" cy="226" r="2.2" opacity=".6"/>
+      <circle cx="470" cy="226" r="2.2" opacity=".2"/><circle cx="494" cy="226" r="2.2" opacity=".5"/>
+      <circle cx="518" cy="226" r="2.2" opacity=".35"/><circle cx="542" cy="226" r="2.2" opacity=".55"/>
+      <circle cx="566" cy="226" r="2.2" opacity=".3"/><circle cx="590" cy="226" r="2.2" opacity=".45"/>
+      <rect x="244" y="194" width="7" height="6" opacity=".45"/><rect x="268" y="194" width="7" height="6" opacity=".2"/>
+      <rect x="292" y="194" width="7" height="6" opacity=".6"/><rect x="316" y="194" width="7" height="6" opacity=".35"/>
+      <rect x="340" y="194" width="7" height="6" opacity=".55"/><rect x="364" y="194" width="7" height="6" opacity=".25"/>
+      <rect x="388" y="194" width="7" height="6" opacity=".5"/><rect x="412" y="194" width="7" height="6" opacity=".6"/>
+      <rect x="436" y="194" width="7" height="6" opacity=".3"/><rect x="460" y="194" width="7" height="6" opacity=".45"/>
+      <rect x="296" y="173" width="6" height="5" opacity=".4"/><rect x="456" y="173" width="6" height="5" opacity=".35"/>
+      <rect x="476" y="173" width="6" height="5" opacity=".55"/><rect x="496" y="173" width="6" height="5" opacity=".25"/>
+      <rect x="478" y="154" width="8" height="5" opacity=".5"/><rect x="494" y="154" width="8" height="5" opacity=".6"/>
+      <rect x="510" y="154" width="8" height="5" opacity=".4"/>
+    </g>
+    <rect x="512" y="192" width="16" height="10" fill="#f0c878" opacity=".9"/>
+    <g fill="#f3ecd6"><circle cx="196" cy="75" r="1.8"/><circle cx="600" cy="69" r="1.8"/></g>
+    <g fill="#e8b860" opacity=".16">
+      <rect x="229" y="250" width="2" height="9"/><rect x="349" y="252" width="2" height="7"/>
+      <rect x="445" y="250" width="2" height="10"/><rect x="519" y="252" width="2" height="8"/>
     </g>
   </svg>`;
 
@@ -168,6 +227,63 @@
         ['花政', 'はなまさ'],
         ['千鳥', 'ちどり'],
         ['文潮社', 'ぶんちょうしゃ'],
+      ],
+    },
+    {
+      id: 'kochou',
+      no: 'FILE 03',
+      title: '胡蝶丸殺人事件',
+      subtitle: '凪の夜の八人',
+      season: '大正十二年五月　凪',
+      setting: '上海航路の連絡船',
+      tagline: '今夜、船の時計は一時間戻る。七点鐘は、二度鳴る。',
+      synopsis: '長崎から上海へ向かう連絡船〈胡蝶丸〉は、今夜零時に時計を一時間戻す。夕食の席で「胡蝶は、二度目の七点鐘に死す」という予告状を受け取った歌姫・早乙女蝶子は、二度目の零時、特別室で遺体となって見つかる。伴奏者、弟、付き人、事務長、婦人記者、留学生、給仕――凪の海に浮かぶ八人の過去をたどり、二度ある一時間の嘘を暴け。',
+      cast: '早乙女蝶子・御子柴律・早乙女時雄・藤枝しづ・久世周平・葛城芙美・沈黎明・戸田春吉',
+      saveKey: 'kochou-save-v1',
+      files: ['js/series/kochou/data.js', 'js/series/kochou/past.js', 'js/series/kochou/stories.js'],
+      weather: 'calm',
+      art: SHIP,
+      artStages: ['harbor', 'kdawn'],
+      totals: { chars: 8, clues: 59 },
+      ruby: [
+        ['胡蝶丸', 'こちょうまる'],
+        ['胡蝶', 'こちょう'],
+        ['蝶々夫人', 'ちょうちょうふじん'],
+        ['早乙女', 'さおとめ'],
+        ['蝶子', 'ちょうこ'],
+        ['御子柴', 'みこしば'],
+        ['(?<=御子柴[\\s　]?)律', 'りつ'],
+        ['時雄', 'ときお'],
+        ['源蔵', 'げんぞう'],
+        ['藤枝', 'ふじえだ'],
+        ['久世', 'くぜ'],
+        ['周平', 'しゅうへい'],
+        ['葛城', 'かつらぎ'],
+        ['芙美', 'ふみ'],
+        ['沈(?![黙没着殿丁痛])', 'しん'],
+        ['黎明', 'れいめい'],
+        ['秀英', 'しゅうえい'],
+        ['戸田', 'とだ'],
+        ['春吉', 'はるきち'],
+        ['宮下', 'みやした'],
+        ['千代', 'ちよ'],
+        ['阿蝶', 'アーディエ'],
+        ['外婆橋', 'ワイポーチャオ'],
+        ['若狭丸', 'わかさまる'],
+        ['瑞穂汽船', 'みずほきせん'],
+        ['新嘉坡', 'シンガポール'],
+        ['黄浦江', 'こうほこう'],
+        ['虹口', 'ホンキュー'],
+        ['呉淞', 'ウースン'],
+        ['外灘', 'バンド'],
+        ['申報', 'しんぽう'],
+        ['上海', 'シャンハイ'],
+        ['長崎', 'ながさき'],
+        ['天草', 'あまくさ'],
+        ['点鐘', 'てんしょう'],
+        ['懐剣', 'かいけん'],
+        ['打掛', 'うちかけ'],
+        ['凪', 'なぎ'],
       ],
     },
   ];
